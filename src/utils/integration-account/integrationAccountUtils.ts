@@ -23,3 +23,5 @@ export async function createNewIntegrationAccount(integrationAccountName: string
 
     return integrationAccount;
 }
+
+export async function getAllIntegrationAccounts()

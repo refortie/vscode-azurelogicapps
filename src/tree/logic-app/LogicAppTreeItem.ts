@@ -10,6 +10,7 @@ import { localize } from "../../localize";
 import { Callbacks, getCallbacks } from "../../utils/logic-app/callbackUtils";
 import { ConnectionReferences, getConnectionReferencesForLogicApp } from "../../utils/logic-app/connectionReferenceUtils";
 import { getIconPath } from "../../utils/nodeUtils";
+import { LogicAppIntegrationAccountsTreeItem } from "./LogicAppIntegrationAccountsTreeItem";
 import { LogicAppRunsTreeItem } from "./LogicAppRunsTreeItem";
 import { LogicAppTriggersTreeItem } from "./LogicAppTriggersTreeItem";
 import { LogicAppVersionsTreeItem } from "./LogicAppVersionsTreeItem";
@@ -18,11 +19,13 @@ export class LogicAppTreeItem implements IAzureParentTreeItem {
     public static contextValue = "azLogicAppsWorkflow";
     public readonly childTypeLabel: string = localize("azLogicApps.child", "Child");
     public contextValue = LogicAppTreeItem.contextValue;
+    public integrationAccountItem: LogicAppIntegrationAccountsTreeItem;
     public logicAppRunsItem: LogicAppRunsTreeItem;
     public logicAppTriggersItem: LogicAppTriggersTreeItem;
     public logicAppVersionsItem: LogicAppVersionsTreeItem;
 
     public constructor(private readonly client: LogicAppsManagementClient, private workflow: Workflow) {
+        this.integrationAccountItem = new LogicAppIntegrationAccountsTreeItem(client, workflow);
         this.logicAppRunsItem = new LogicAppRunsTreeItem(client, workflow);
         this.logicAppTriggersItem = new LogicAppTriggersTreeItem(client, workflow);
         this.logicAppVersionsItem = new LogicAppVersionsTreeItem(client, workflow);
@@ -94,15 +97,23 @@ export class LogicAppTreeItem implements IAzureParentTreeItem {
     }
 
     public async loadMoreChildren(): Promise<IAzureTreeItem[]> {
-        return [
+        const children: IAzureTreeItem[] = [
             this.logicAppRunsItem,
             this.logicAppTriggersItem,
             this.logicAppVersionsItem
         ];
+
+        if (this.integrationAccountItem) {
+            children.push(this.integrationAccountItem);
+        }
+        return children;
     }
 
     public pickTreeItem(expectedContextValue: string): IAzureTreeItem | undefined {
         switch (expectedContextValue) {
+            case LogicAppIntegrationAccountsTreeItem.contextValue:
+                return this.integrationAccountItem;
+
             case LogicAppRunsTreeItem.contextValue:
                 return this.logicAppRunsItem;
 

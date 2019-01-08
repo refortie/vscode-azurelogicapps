@@ -87,6 +87,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             await enableLogicApp(tree, node);
         });
 
+        registerCommand("azureLogicApps.linkToLogicApp", async (node: IAzureNode) => {
+            await linkToLogicApp(node);
+        });
+
+
         registerCommand("azureLogicApps.loadMore", async (node: IAzureNode) => {
             await tree.loadMore(node);
         });
