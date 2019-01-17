@@ -4,6 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IntegrationAccount } from "azure-arm-logic/lib/models";
+import LogicAppsManagementClient from "azure-arm-logic";
+import { addExtensionUserAgent } from "vscode-azureextensionui";
+import { ServiceClientCredentials } from "ms-rest";
+
 
 export enum IntegrationAccountSku {
     Free = "Free",
@@ -24,4 +28,17 @@ export async function createNewIntegrationAccount(integrationAccountName: string
     return integrationAccount;
 }
 
-export async function getAllIntegrationAccounts()
+export async function getAllIntegrationAccounts(credentials: ServiceClientCredentials, subscriptionId: string): Promise<IntegrationAccount[]> {
+    const client = new LogicAppsManagementClient(credentials, subscriptionId);
+    addExtensionUserAgent(client);
+
+    const integrationAccounts = await client.integrationAccounts.listBySubscription();
+    let nextPageLink = integrationAccounts.nextLink;
+
+    while (nextPageLink) {
+        integrationAccounts.push(...await client.integrationAccounts.listBySubscriptionNext(nextPageLink));
+        nextPageLink = integrationAccounts.nextLink;
+    }
+
+    return integrationAccounts;
+}

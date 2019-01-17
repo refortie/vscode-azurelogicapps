@@ -98,14 +98,11 @@ export class LogicAppTreeItem implements IAzureParentTreeItem {
 
     public async loadMoreChildren(): Promise<IAzureTreeItem[]> {
         const children: IAzureTreeItem[] = [
+            this.integrationAccountItem,
             this.logicAppRunsItem,
             this.logicAppTriggersItem,
             this.logicAppVersionsItem
         ];
-
-        if (this.integrationAccountItem) {
-            children.push(this.integrationAccountItem);
-        }
         return children;
     }
 
@@ -139,5 +136,13 @@ export class LogicAppTreeItem implements IAzureParentTreeItem {
         const updatedWorkflow = await this.client.workflows.createOrUpdate(this.resourceGroupName, this.workflowName, workflow);
 
         return JSON.stringify(updatedWorkflow.definition, null, 4);
+    }
+
+    public async linkIntegrationAccount(integrationAccountName: string): Promise<void> {
+        this.workflow.integrationAccount = {
+            name: integrationAccountName
+        };
+
+        await this.client.workflows.createOrUpdate(this.resourceGroupName, this.workflowName, this.workflow);
     }
 }

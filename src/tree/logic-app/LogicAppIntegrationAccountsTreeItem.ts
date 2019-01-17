@@ -27,8 +27,20 @@ export class LogicAppIntegrationAccountsTreeItem implements IAzureParentTreeItem
         return nodeUtils.getThemedIconPath("BulletList");
     }
 
-    public get id(): string {
-        return this.workflow.integrationAccount!.id!;
+    public get id(): string | undefined {
+        if (!this.workflow.integrationAccount) {
+            return undefined;
+        } else {
+            return this.workflow.integrationAccount.id;
+        }
+    }
+
+    public get name(): string | undefined {
+        if (!this.workflow.integrationAccount) {
+            return undefined;
+        } else {
+            return this.workflow.integrationAccount.name;
+        }
     }
 
     public get resourceGroupName(): string {
@@ -40,8 +52,12 @@ export class LogicAppIntegrationAccountsTreeItem implements IAzureParentTreeItem
     }
 
     public async loadMoreChildren(_: IAzureNode, clearCache: boolean): Promise<IAzureTreeItem[]> {
-        const integrationAccount = await this.client.integrationAccounts.get(this.resourceGroupName, this.workflow.integrationAccount!.name!);
+        if (!this.name) {
+            return [];
+        } else {
+            const integrationAccount = await this.client.integrationAccounts.get(this.resourceGroupName, this.name);
 
-        return [new IntegrationAccountTreeItem(this.client, integrationAccount)];
+            return [new IntegrationAccountTreeItem(this.client, integrationAccount)];
+        }
     }
 }

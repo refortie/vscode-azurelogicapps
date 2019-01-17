@@ -14,6 +14,7 @@ import { createLogicApp } from "./commands/logic-app/createLogicApp";
 import { deleteLogicApp } from "./commands/logic-app/deleteLogicApp";
 import { disableLogicApp } from "./commands/logic-app/disableLogicApp";
 import { enableLogicApp } from "./commands/logic-app/enableLogicApp";
+import { linkToLogicApp } from "./commands/logic-app/linkToLogicApp";
 import { openInDesigner } from "./commands/logic-app/openInDesigner";
 import { openInEditor } from "./commands/logic-app/openInEditor";
 import { openInPortal } from "./commands/logic-app/openInPortal";
@@ -88,9 +89,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         });
 
         registerCommand("azureLogicApps.linkToLogicApp", async (node: IAzureNode) => {
-            await linkToLogicApp(node);
+            await linkToLogicApp(tree, node);
         });
-
 
         registerCommand("azureLogicApps.loadMore", async (node: IAzureNode) => {
             await tree.loadMore(node);

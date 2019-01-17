@@ -97,6 +97,11 @@
             },
             {
                 "category": "Azure Logic Apps",
+                "command": "azureLogicApps.linkToLogicApp",
+                "title": "%azLogicApps.linkToLogicApp%"
+            },
+            {
+                "category": "Azure Logic Apps",
                 "command": "azureLogicApps.loadMore",
                 "title": "%azLogicApps.loadMore%"
             },
@@ -449,6 +454,11 @@
                 {
                     "command": "azureLogicApps.linkToLogicApp",
                     "group": "1@1",
+                    "when": "view == azureLogicAppsExplorer && viewItem == azLogicAppsIntegrationAccounts"
+                },
+                {
+                    "command": "azureLogicApps.refresh",
+                    "group": "1@2",
                     "when": "view == azureLogicAppsExplorer && viewItem == azLogicAppsIntegrationAccounts"
                 },
                 {
